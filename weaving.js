@@ -1,4 +1,4 @@
-; /* Web weaving */ ;
+; /* Web weaving. (C) 2012 David Byard.  Released under AGPLv3.  See LICENSE.*/ ;
 
 namespace = window.namespace || {};
 namespace.util = namespace.util || {};

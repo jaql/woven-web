@@ -1,5 +1,6 @@
 ; /* Fast 2D Perlin Noise */ ;
 ; /* Taken from http://freespace.virgin.net/hugo.elias/models/m_perlin.htm */ ;
+; /* This file is public domain.  Other files are not. */ ;
 
 namespace = window.namespace || {};
 namespace.util = namespace.util || {};
