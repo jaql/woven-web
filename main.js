@@ -12,7 +12,7 @@ window.addEventListener('load', function() {
     if (paramIndex != -1) {
         var potentialParam = window.location.href.substring(paramIndex + 6, window.location.length);
         if (potentialParam != '') {
-            param = potentialParam;
+            param = decodeURIComponent(potentialParam);
         }
     }
     var controller = new namespace.Controller(param, new Date());
