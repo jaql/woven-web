@@ -176,7 +176,8 @@ namespace.util.weaveWeb = (function() {
                 // Remove any nodes that have no links.
                 // TODO: work out why this occurs.  Sibling issues, I think.
                 for (var i = 0; i < currentRing.length; i++) {
-                    if (!currentRing[i].hasInner && !currentRing[i].hasOuter
+                    if (currentRing[i] != null
+                        && !currentRing[i].hasInner && !currentRing[i].hasOuter
                         && !currentRing[i].hasLeft && !currentRing[i].hasRight)
                     {
                         currentRing[i] = null;
