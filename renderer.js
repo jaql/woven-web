@@ -7,7 +7,7 @@ namespace.Renderer = function(canvas) {
     var context = canvas.getContext('2d');
     var centreX = canvas.width / 2;
     var centreY = canvas.height / 2;
-    var rainGravity = canvas.height * 0.5;
+    var rainGravity = canvas.height * 0.75;
     var lineNoiseVector = {x: 0.6 * 0.05 * canvas.width, y: -0.2 * 0.05 * canvas.height};
 
     var rainDrops = [];
@@ -45,7 +45,7 @@ namespace.Renderer = function(canvas) {
             context.beginPath();
             context.strokeStyle = '#333';
             context.moveTo(rainDrop.x, rainDrop.y);
-            context.lineTo(rainDrop.x + 5 * noise, rainDrop.y + 5);
+            context.lineTo(rainDrop.x + 15 * noise, rainDrop.y + 15);
             context.stroke();
         }
     }
