@@ -6,14 +6,14 @@ namespace.util = namespace.util || {};
 namespace.util.getWikipediaLinks = (function() {
   function processPageText(language, pageName, pageText, recursion, successCallback, failureCallback) {
     // Recursion?
-    var redirectMatches = pageText.match(/#redirect\[\[.+?\]\]/g);
-    if (redirectMatches != null) {
-      console.log('Following redirect', redirectMatches[0]);
+    var redirectMatchIndex = pageText.toLowerCase().indexOf('#redirect');
+    var redirectMatch = /#redirect *\[\[(.+?)\]\]/ig.exec(pageText);
+    if (redirectMatch != null) {
+      console.log('Following redirect', redirectMatch[1]);
       if (recursion > 3) {
         failureCallback('Recursion limit hit fetching page');
       } else {
-        var redirectPage = redirectMatches[0].substr(11, redirectMatches[0].length - 13);
-        getWikipediaLinks(language, redirectPage, recursion + 1, successCallback, failureCallback);        
+        getWikipediaLinks(language, redirectMatch[1], recursion + 1, successCallback, failureCallback);        
       }
     // Extract all links
     } else {
