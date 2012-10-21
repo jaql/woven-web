@@ -16,7 +16,8 @@ namespace.Controller = function(word, initialTime) {
         console.log('Loaded!');
         text = null;
     }, function(errorMessage) {
-        text = errorMessage;
+        text = 'ERROR: ' + errorMessage;
+        console.log('ERROR: ' + errorMessage);
     });
     
     this.tick = function(newTime) {

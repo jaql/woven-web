@@ -140,7 +140,7 @@ namespace.Renderer = function(canvas) {
         var y = canvas.height / 2;
 
         var flicker = 0.4 * Math.abs(noise) + 0.5;
-        context.font = "8pt Josefin Sans";
+        context.font = "12pt Josefin Sans";
         context.textAlign = "center";
         context.fillStyle = 'rgba(255, 255, 255, ' + flicker +')';
         context.fillText(text, centreX, centreY);

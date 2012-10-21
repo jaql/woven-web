@@ -4,38 +4,54 @@ namespace = window.namespace || {};
 namespace.util = namespace.util || {};
 
 namespace.util.getWikipediaLinks = (function() {
-  function processPageText(pageName, pageText, successCallback, failureCallback) {
-    // Extract all links
-    var uniqueMatches = [];
-    var popularityMap = {};
-    var matches = pageText.match(/\[\[[^:/]*?\]\]/g);
-    for (var i = 0; i < matches.length; i++) {
-      var match = matches[i].substr(2, matches[i].length - 4).toLowerCase();  // chop off brackets, lower case
-      var pipePosition = match.indexOf('|');
-      if (pipePosition != -1) {
-        match = match.substr(0, pipePosition);
-      }
-      if (popularityMap[match] == undefined) {
-        popularityMap[match] = 1;
-        uniqueMatches.push(match);
+  function processPageText(language, pageName, pageText, recursion, successCallback, failureCallback) {
+    // Recursion?
+    var redirectMatches = pageText.match(/#redirect\[\[.+?\]\]/g);
+    if (redirectMatches != null) {
+      console.log('Following redirect', redirectMatches[0]);
+      if (recursion > 3) {
+        failureCallback('Recursion limit hit fetching page');
       } else {
-        popularityMap[match] ++;
+        var redirectPage = redirectMatches[0].substr(11, redirectMatches[0].length - 13);
+        getWikipediaLinks(language, redirectPage, recursion + 1, successCallback, failureCallback);        
       }
-    }
-    uniqueMatches.sort(function(a, b) {
-      return popularityMap[b] - popularityMap[a];
-    });
-    successCallback(uniqueMatches);
+    // Extract all links
+    } else {
+      var uniqueMatches = [];
+      var popularityMap = {};
+      var matches = pageText.match(/\[\[[^:/]*?\]\]/g);
+      if (matches != null) {
+        for (var i = 0; i < matches.length; i++) {
+          var match = matches[i].substr(2, matches[i].length - 4).toLowerCase();  // chop off brackets, lower case
+          var pipePosition = match.indexOf('|');
+          if (pipePosition != -1) {
+            match = match.substr(0, pipePosition);
+          }
+          if (popularityMap[match] == undefined) {
+            popularityMap[match] = 1;
+            uniqueMatches.push(match);
+          } else {
+            popularityMap[match] ++;
+          }
+        }
+        uniqueMatches.sort(function(a, b) {
+          return popularityMap[b] - popularityMap[a];
+        });
+        successCallback(uniqueMatches);        
+      } else {
+        successCallback([]);
+      }
+    }    
   }
 
-  function processPageResponse(pageName, pageData, successCallback, failureCallback) {
+  function processPageResponse(language, pageName, pageData, recursion, successCallback, failureCallback) {
     // Extract page text
     if (pageData.query && pageData.query.pages) {
       for (var pageId in pageData.query.pages) {
           var pageProperties = pageData.query.pages[pageId];
           if (pageProperties.revisions && pageProperties.revisions[0] && pageProperties.revisions[0]['*']) {
             var pageText = pageData.query.pages[pageId].revisions[0]['*'];
-            processPageText(pageName, pageText, successCallback, failureCallback);
+            processPageText(language, pageName, pageText, recursion, successCallback, failureCallback);
             return;
           }
       }      
@@ -45,7 +61,7 @@ namespace.util.getWikipediaLinks = (function() {
     successCallback([]);
   }
 
-  return function(language, pageName, successCallback, failureCallback) {
+  function getWikipediaLinks(language, pageName, recursion, successCallback, failureCallback) {    
     var url = 'http://'
       + language
       + '.wikipedia.org/w/api.php?format=json&action=query&titles='
@@ -55,11 +71,15 @@ namespace.util.getWikipediaLinks = (function() {
     $.ajax(url, {
         dataType: 'jsonp',
         success: function(data) {
-          processPageResponse(pageName, data, successCallback, failureCallback);
+          processPageResponse(language, pageName, data, recursion, successCallback, failureCallback);
         },
         error: function() {
           failureCallback('fetch problem for ' + pageName);
         }
-      });
+      });    
+  }
+  
+  return function(language, pageName, successCallback, failureCallback) {
+    return getWikipediaLinks(language, pageName, 0, successCallback, failureCallback)
   }
 })();

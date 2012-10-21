@@ -224,7 +224,7 @@ namespace.util.weaveWeb = (function() {
             rootNode.possibleChildren = children;
             _buildWebRing(web, 1, targetDepth, usedWords, progressCallback, successCallback, errorCallback);
         }, function(errorMessage) {
-            errorCallback(errorErrorMessage);
+            errorCallback(errorMessage);
         });
     }
 })();
