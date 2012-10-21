@@ -9,7 +9,7 @@ namespace.util.getWikipediaLinks = (function() {
     var redirectMatchIndex = pageText.toLowerCase().indexOf('#redirect');
     var redirectMatch = /#redirect *\[\[(.+?)\]\]/ig.exec(pageText);
     if (redirectMatch != null) {
-      console.log('Following redirect', redirectMatch[1]);
+      console.log('**WARN** Following redirect: ' + pageName + ' --> ' + redirectMatch[1]);
       if (recursion > 3) {
         failureCallback('Recursion limit hit fetching page');
       } else {
